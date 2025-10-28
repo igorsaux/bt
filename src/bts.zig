@@ -35,13 +35,14 @@ fn printUsage() void {
 const Args = cli.ServerArgs;
 
 pub fn main() !void {
-    const alloc = std.heap.page_allocator;
+    var alloc = std.heap.DebugAllocator(.{}).init;
+    defer _ = alloc.deinit();
 
-    const args = try std.process.argsAlloc(alloc);
-    defer std.process.argsFree(alloc, args);
+    const args = try std.process.argsAlloc(alloc.allocator());
+    defer std.process.argsFree(alloc.allocator(), args);
 
     var parse_err: Args.Error = .{};
-    const app_args = Args.parse(alloc, args, &parse_err) catch |err| {
+    const app_args = Args.parse(alloc.allocator(), args, &parse_err) catch |err| {
         std.debug.print("{s}", .{@errorName(err)});
 
         if (parse_err.target) |target| {
@@ -58,7 +59,7 @@ pub fn main() !void {
         std.process.exit(1);
     }
 
-    cli.runServer(alloc, .{
+    cli.runServer(alloc.allocator(), .{
         .ip = app_args.ip orelse "127.0.0.1",
         .port = app_args.port orelse 8888,
         .mapping = app_args.mapping,

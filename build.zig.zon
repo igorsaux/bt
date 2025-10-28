@@ -1,6 +1,6 @@
 .{
     .name = .bt,
-    .version = "1.0.0",
+    .version = "1.0.1",
     .fingerprint = 0x417aaeff7b9a8fa2,
     .minimum_zig_version = "0.15.2",
     .dependencies = .{},

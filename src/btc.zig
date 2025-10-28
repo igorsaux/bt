@@ -31,8 +31,8 @@ fn printUsage() void {
 }
 
 pub fn main() !void {
-    var alloc = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer alloc.deinit();
+    var alloc = std.heap.DebugAllocator(.{}).init;
+    defer _ = alloc.deinit();
 
     const args = try std.process.argsAlloc(alloc.allocator());
     defer std.process.argsFree(alloc.allocator(), args);
